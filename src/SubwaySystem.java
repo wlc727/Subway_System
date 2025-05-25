@@ -77,3 +77,50 @@ class SubwaySystem {
         return transferStations.entrySet();
     }
 
+    // 输入某一站点，输出线路距离小于 n 的所有站点集合
+    public List<Map<String, Object>> getStationsWithinDistance(String stationName, double n) {
+        Station start = stationMap.get(stationName);
+        if (start == null) {
+            throw new IllegalArgumentException("站点名称不存在");
+        }
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        Queue<Map<String, Object>> queue = new LinkedList<>();
+        Set<Station> visited = new HashSet<>();
+
+        queue.offer(Map.of("station", start, "distance", 0.0, "line", ""));
+        visited.add(start);
+
+        while (!queue.isEmpty()) {
+            Map<String, Object> currentInfo = queue.poll();
+            Station current = (Station) currentInfo.get("station");
+            double currentDistance = (double) currentInfo.get("distance");
+            String currentLine = (String) currentInfo.get("line");
+
+            for (Map.Entry<Station, Double> neighborEntry : graph.get(current).entrySet()) {
+                Station neighbor = neighborEntry.getKey();
+                double edgeDistance = neighborEntry.getValue();
+                double newDistance = currentDistance + edgeDistance;
+
+                if (newDistance < n && !visited.contains(neighbor)) {
+                    String line = getCommonLine(current, neighbor, currentLine);
+                    result.add(Map.of("station", neighbor.getName(), "line", line, "distance", newDistance));
+                    queue.offer(Map.of("station", neighbor, "distance", newDistance, "line", line));
+                    visited.add(neighbor);
+                }
+            }
+        }
+        return result;
+    }
+
+    private String getCommonLine(Station station1, Station station2, String currentLine) {
+        for (String line : station1.getLines()) {
+            if (station2.getLines().contains(line)) {
+                if (currentLine.isEmpty() || currentLine.equals(line)) {
+                    return line;
+                }
+            }
+        }
+        return "";
+    }
+

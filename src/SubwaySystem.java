@@ -65,3 +65,15 @@ class SubwaySystem {
         graph.get(from).put(to, distance);
     }
 
+    // 识别所有中转站
+    public Set<Map.Entry<Station, List<String>>> getTransferStations() {
+        Map<Station, List<String>> transferStations = new HashMap<>();
+        for (Map.Entry<String, Station> entry : stationMap.entrySet()) {
+            Station station = entry.getValue();
+            if (station.getLines().size() >= 2) {
+                transferStations.put(station, station.getLines());
+            }
+        }
+        return transferStations.entrySet();
+    }
+

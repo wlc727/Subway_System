@@ -124,3 +124,33 @@ class SubwaySystem {
         return "";
     }
 
+    // 输入起点站和终点站的名称，返回所有路径的集合
+    public List<List<Station>> getAllPaths(String startName, String endName) {
+        Station start = stationMap.get(startName);
+        Station end = stationMap.get(endName);
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("站点名称不存在");
+        }
+
+        List<List<Station>> paths = new ArrayList<>();
+        List<Station> path = new ArrayList<>();
+        path.add(start);
+        dfs(start, end, path, paths);
+        return paths;
+    }
+
+    private void dfs(Station current, Station end, List<Station> path, List<List<Station>> paths) {
+        if (current.equals(end)) {
+            paths.add(new ArrayList<>(path));
+            return;
+        }
+
+        for (Station neighbor : graph.get(current).keySet()) {
+            if (!path.contains(neighbor)) {
+                path.add(neighbor);
+                dfs(neighbor, end, path, paths);
+                path.remove(path.size() - 1);
+            }
+        }
+    }
+

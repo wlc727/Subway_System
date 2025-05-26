@@ -154,3 +154,75 @@ class SubwaySystem {
         }
     }
 
+    // 给定起点站和终点站的名称，返回最短路径
+    public List<Station> getShortestPath(String startName, String endName) {
+        Station start = stationMap.get(startName);
+        Station end = stationMap.get(endName);
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("站点名称不存在");
+        }
+
+        Map<Station, Double> distances = new HashMap<>();
+        Map<Station, Station> previous = new HashMap<>();
+        PriorityQueue<Station> queue = new PriorityQueue<>(Comparator.comparingDouble(distances::get));
+
+        for (Station station : graph.keySet()) {
+            distances.put(station, Double.MAX_VALUE);
+        }
+        distances.put(start, 0.0);
+        queue.offer(start);
+
+        while (!queue.isEmpty()) {
+            Station current = queue.poll();
+            if (current.equals(end)) {
+                break;
+            }
+
+            for (Map.Entry<Station, Double> neighborEntry : graph.get(current).entrySet()) {
+                Station neighbor = neighborEntry.getKey();
+                double distance = neighborEntry.getValue();
+                double newDistance = distances.get(current) + distance;
+
+                if (newDistance < distances.get(neighbor)) {
+                    distances.put(neighbor, newDistance);
+                    previous.put(neighbor, current);
+                    queue.offer(neighbor);
+                }
+            }
+        }
+
+        return buildPath(previous, end);
+    }
+
+    private List<Station> buildPath(Map<Station, Station> previous, Station end) {
+        List<Station> path = new ArrayList<>();
+        for (Station at = end; at != null; at = previous.get(at)) {
+            path.add(at);
+        }
+        Collections.reverse(path);
+        return path;
+    }
+
+    public void printShortestPath(String startName, String endName) {
+        List<Station> path = getShortestPath(startName, endName);
+        if (path.isEmpty()) {
+            System.out.println("未找到路径");
+            return;
+        }
+
+        String currentLine = "";
+        Station segmentStart = path.get(0);
+        for (int i = 1; i < path.size(); i++) {
+            Station current = path.get(i);
+            Station prev = path.get(i - 1);
+            String commonLine = getCommonLine(prev, current, currentLine);
+            if (currentLine.isEmpty()) {
+                currentLine = commonLine;
+            } else if (!currentLine.equals(commonLine)) {
+                System.out.printf("先坐 %s 从 %s 站到 %s 站，", currentLine, segmentStart.getName(), prev.getName());
+                currentLine = commonLine;
+                segmentStart = prev;
+            }
+        }
+        System.out.printf("再坐 %s 从 %s 站到 %s 站%n", currentLine, segmentStart.getName(), path.get(path.size() - 1).getName());
+    }

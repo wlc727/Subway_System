@@ -45,3 +45,7 @@ public class Test {
         // 4. 给定起点站和终点站的名称，返回最短路径
         System.out.println("\n从 " + startName + " 到 " + endName + " 的最短路径：");
         System.out.println(shortestPath);
+
+        // 5.打印最短路径
+        System.out.println("\n最短路径乘车信息：");
+        subwaySystem.printShortestPath(startName, endName);

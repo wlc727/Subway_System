@@ -226,3 +226,15 @@ class SubwaySystem {
         }
         System.out.printf("再坐 %s 从 %s 站到 %s 站%n", currentLine, segmentStart.getName(), path.get(path.size() - 1).getName());
     }
+
+    // 6) 计算指定路径的乘车费用（普通单程票）
+    public double calculateFareForPath(List<Station> path) {
+        double totalDistance = 0;
+        for (int i = 1; i < path.size(); i++) {
+            Station prev = path.get(i - 1);
+            Station current = path.get(i);
+            totalDistance += graph.get(prev).get(current);
+        }
+        return calculateFare(totalDistance, "普通单程票");
+    }
+

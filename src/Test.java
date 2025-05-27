@@ -49,3 +49,18 @@ public class Test {
         // 5.打印最短路径
         System.out.println("\n最短路径乘车信息：");
         subwaySystem.printShortestPath(startName, endName);
+
+        // 6.计算指定路径的乘车费用（普通单程票）
+        if (!allPaths.isEmpty()) {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("\n请输入要选择的路径编号 (1 - " + allPaths.size() + ")：");
+            int pathIndex = scanner.nextInt() - 1;
+            if (pathIndex >= 0 && pathIndex < allPaths.size()) {
+                List<Station> selectedPath = allPaths.get(pathIndex);
+                double normalFare = subwaySystem.calculateFareForPath(selectedPath);
+                System.out.println("该路径的普通单程票费用：" + normalFare);
+            } else {
+                System.out.println("输入的编号无效");
+            }
+        }
+

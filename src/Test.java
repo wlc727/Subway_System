@@ -64,3 +64,21 @@ public class Test {
             }
         }
 
+        // 7.计算不同支付方式的票价
+        if (!allPaths.isEmpty()) {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("\n请再次输入要选择的路径编号 (1 - " + allPaths.size() + ")：");
+            int pathIndex = scanner.nextInt() - 1;
+            if (pathIndex >= 0 && pathIndex < allPaths.size()) {
+                List<Station> selectedPath = allPaths.get(pathIndex);
+                Map<String, Double> fares = subwaySystem.calculateFaresForPath(selectedPath);
+                System.out.println("不同支付方式的票价：");
+                for (Map.Entry<String, Double> entry : fares.entrySet()) {
+                    System.out.println(entry.getKey() + "：" + entry.getValue());
+                }
+            } else {
+                System.out.println("输入的编号无效");
+            }
+        }
+    }
+}

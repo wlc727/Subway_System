@@ -238,3 +238,45 @@ class SubwaySystem {
         return calculateFare(totalDistance, "普通单程票");
     }
 
+    // 7) 计算不同支付方式的票价
+    public Map<String, Double> calculateFaresForPath(List<Station> path) {
+        double totalDistance = 0;
+        for (int i = 1; i < path.size(); i++) {
+            Station prev = path.get(i - 1);
+            Station current = path.get(i);
+            totalDistance += graph.get(prev).get(current);
+        }
+        double normalFare = calculateFare(totalDistance, "普通单程票");
+        double wuhanTongFare = calculateFare(totalDistance, "武汉通");
+        double dayTicketFare = 0;
+
+        Map<String, Double> fares = new HashMap<>();
+        fares.put("普通单程票", normalFare);
+        fares.put("武汉通", wuhanTongFare);
+        fares.put("日票", dayTicketFare);
+        return fares;
+    }
+
+    // 计算票价
+    public double calculateFare(double distance, String paymentMethod) {
+        double fare = 0;
+        if (distance <= 4) {
+            fare = 2;
+        } else if (distance <= 12) {
+            fare = 2 + Math.ceil((distance - 4) / 4);
+        } else if (distance <= 24) {
+            fare = 4 + Math.ceil((distance - 12) / 6);
+        } else if (distance <= 40) {
+            fare = 6 + Math.ceil((distance - 24) / 8);
+        } else if (distance <= 50) {
+            fare = 8 + Math.ceil((distance - 40) / 10);
+        } else {
+            fare = 9 + Math.ceil((distance - 50) / 20);
+        }
+
+        if ("武汉通".equals(paymentMethod)) {
+            fare *= 0.9;
+        }
+        return fare;
+    }
+}
